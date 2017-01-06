@@ -114,10 +114,10 @@ class Narnoo_Operator {
 		register_post_type(
 				'narnoo_product',
 				array(
-					'labels'      => [
-                               'name'          => __('Products'),
-                               'singular_name' => __('Product'),
-                           ],
+					'label' => ucfirst( $category ),
+					'labels' => array(
+						'singular_name' => ucfirst( $category ),
+					),
 					'hierarchical' => true,
 					'rewrite' => array( 'slug' => 'product' ),
 					'description' => "Custom post type for imported products from Narnoo",
