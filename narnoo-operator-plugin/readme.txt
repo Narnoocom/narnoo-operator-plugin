@@ -3,7 +3,7 @@ Contributors: Narnoo
 Donate link: 
 Tags: Tourism, Media, Web Service, Travel, Narnoo
 Requires at least: 3.3
-Tested up to: 4.6.1
+Tested up to: 4.7
 Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -39,7 +39,7 @@ You can retrieve your APP keys from your account on Narnoo.com. Simply log into 
 
 == Changelog ==
 
-21-02-13: Updated video media player to display high quality video stream.
+06-01-17: Complete rebuild with API 2.0
 
 == Upgrade notice ==
 
