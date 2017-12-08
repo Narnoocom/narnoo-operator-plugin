@@ -3,13 +3,13 @@
 Plugin Name: Narnoo Operator
 Plugin URI: http://narnoo.com/
 Description: Allows Wordpress users to manage and include their Narnoo media into their Wordpress site. You will need a Narnoo API key pair to include your Narnoo media. You can find this by logging into your account at Narnoo.com and going to Account -> View APPS.
-Version: 2.0.0
+Version: 2.1.3
 Author: Narnoo Wordpress developer
 Author URI: http://www.narnoo.com/
 License: GPL2 or later
 */
 
-/*  Copyright 2012  Narnoo.com  (email : info@narnoo.com)
+/*  Copyright 2017  Narnoo.com  (email : info@narnoo.com)
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License, version 2, as
@@ -26,7 +26,7 @@ License: GPL2 or later
 */
 // plugin definitions
 define( 'NARNOO_OPERATOR_PLUGIN_NAME', 'Narnoo Operator' );
-define( 'NARNOO_OPERATOR_CURRENT_VERSION', '2.0.0' );
+define( 'NARNOO_OPERATOR_CURRENT_VERSION', '2.1.3' );
 define( 'NARNOO_OPERATOR_I18N_DOMAIN', 'narnoo-operator' );
 
 define( 'NARNOO_OPERATOR_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -46,7 +46,14 @@ require_once( NARNOO_OPERATOR_PLUGIN_PATH . 'class-narnoo-operator-albums-table.
 require_once( NARNOO_OPERATOR_PLUGIN_PATH . 'class-narnoo-operator-products-table.php' );
 require_once( NARNOO_OPERATOR_PLUGIN_PATH . 'class-narnoo-operator-library-images-table.php' );
 
+//Load CMB2 for metabox creation and tab order
+require_once( NARNOO_OPERATOR_PLUGIN_PATH . 'libs/inti-cmb2.php' );
+require_once( NARNOO_OPERATOR_PLUGIN_PATH . 'libs/cmb2-tabs/inti.php' );
+require_once( NARNOO_OPERATOR_PLUGIN_PATH . 'product-metabox-layout.php' );
+
+
 //PHP VERSION 2.0
+require_once( NARNOO_OPERATOR_PLUGIN_PATH . 'libs/narnoo/authen.php' );
 require_once( NARNOO_OPERATOR_PLUGIN_PATH . 'libs/narnoo/http/WebClient.php' );
 require_once( NARNOO_OPERATOR_PLUGIN_PATH . 'libs/narnoo/operator.php' );
 
@@ -67,43 +74,32 @@ class Narnoo_Operator {
 
 
 		if ( is_admin() ) {
-			add_action( 'plugins_loaded', array( &$this, 'load_language_file' ) );
-			add_filter( 'plugin_action_links', array( &$this, 'plugin_action_links' ), 10, 2 );
+			add_action( 'plugins_loaded', 						array( &$this, 'load_language_file' ) );
+			add_filter( 'plugin_action_links', 					array( &$this, 'plugin_action_links' ), 10, 2 );
 
-			add_action( 'admin_notices', array( &$this, 'display_reminders' ) );
-			add_action( 'admin_menu', array( &$this, 'create_menus' ) );
-			add_action( 'admin_init', array( &$this, 'admin_init' ) );
+			add_action( 'admin_notices', 						array( &$this, 'display_reminders' ) );
+			add_action( 'admin_menu', 							array( &$this, 'create_menus' ) );
+			add_action( 'admin_init', 							array( &$this, 'admin_init' ) );
 
-			add_filter( 'media_upload_tabs', array( &$this, 'add_narnoo_library_menu_tab' ) );
-			add_action( 'media_upload_narnoo_library', array( &$this, 'media_narnoo_library_menu_handle') );
+			add_filter( 'media_upload_tabs', 					array( &$this, 'add_narnoo_library_menu_tab' ) );
+			add_action( 'media_upload_narnoo_library', 			array( &$this, 'media_narnoo_library_menu_handle') );
 
-			add_action( 'wp_ajax_narnoo_operator_api_request', array( 'Narnoo_Operator_Helper', 'ajax_api_request' ) );
+			add_action( 'wp_ajax_narnoo_operator_api_request', 	array( 'Narnoo_Operator_Helper', 'ajax_api_request' ) );
 
 			//Meta Boxes
-			add_action('add_meta_boxes', array( &$this, 'add_noo_album_meta_box'));
-			add_action( 'save_post', array( &$this, 'save_noo_album_meta_box'));
-			add_action('add_meta_boxes', array( &$this, 'add_noo_video_meta_box'));
-			add_action( 'save_post', array( &$this, 'save_noo_video_meta_box'));
-			add_action('add_meta_boxes', array( &$this, 'add_noo_print_meta_box'));
-			add_action( 'save_post', array( &$this, 'save_noo_print_meta_box'));
+			/*add_action('add_meta_boxes', 		array( &$this, 'add_noo_album_meta_box'));
+			add_action( 'save_post', 			array( &$this, 'save_noo_album_meta_box'));
+			add_action('add_meta_boxes',		array( &$this, 'add_noo_video_meta_box'));
+			add_action( 'save_post', 			array( &$this, 'save_noo_video_meta_box'));
+			add_action('add_meta_boxes', 		array( &$this, 'add_noo_print_meta_box'));
+			add_action( 'save_post', 			array( &$this, 'save_noo_print_meta_box'));*/
 			
 
 		} else {
-			/*add_shortcode( 'narnoo_operator_brochure', array( &$this, 'narnoo_operator_brochure_shortcode' ) );
-			add_shortcode( 'narnoo_operator_video', array( &$this, 'narnoo_operator_video_shortcode' ) );
-			add_shortcode( 'narnoo_operator_tiles_gallery', array( &$this, 'narnoo_operator_tiles_gallery_shortcode' ) );
-			add_shortcode( 'narnoo_operator_single_link_gallery', array( &$this, 'narnoo_operator_single_link_gallery_shortcode' ) );
-			add_shortcode( 'narnoo_operator_slider_gallery', array( &$this, 'narnoo_operator_slider_gallery_shortcode' ) );
-			add_shortcode( 'narnoo_operator_grid_gallery', array( &$this, 'narnoo_operator_grid_gallery_shortcode' ) );*/
-
-			add_action( 'wp_enqueue_scripts', array( &$this, 'load_scripts' ) );
-			add_action( 'init', array( &$this, 'check_request' ) );
-
-			add_filter( 'widget_text', 'do_shortcode' );
+			
+			add_filter( 'widget_text', 					array( &$this, 'do_shortcode' ) );
 		}
 
-		//add_action( 'wp_ajax_narnoo_operator_lib_request', array( &$this, 'narnoo_operator_ajax_lib_request' ) );
-		//add_action( 'wp_ajax_nopriv_narnoo_operator_lib_request', array( &$this, 'narnoo_operator_ajax_lib_request' ) );
 	}
 
 	/**
@@ -114,9 +110,9 @@ class Narnoo_Operator {
 		register_post_type(
 				'narnoo_product',
 				array(
-					'label' => ucfirst( $category ),
+					'label' => 'Products',
 					'labels' => array(
-						'singular_name' => ucfirst( $category ),
+						'singular_name' => 'Product',
 					),
 					'hierarchical' => true,
 					'rewrite' => array( 'slug' => 'product' ),
@@ -128,7 +124,7 @@ class Narnoo_Operator {
 					'show_ui' => true,
 					'show_in_menu' => 'product_import_page',
 					'show_in_admin_bar' => true,
-					'supports' => array( 'title', 'excerpt', 'thumbnail', 'editor', 'author', 'revisions', 'custom-fields', 'page-attributes' ),
+					'supports' => array( 'title', 'excerpt', 'thumbnail', 'editor', 'author', 'revisions', 'page-attributes' ),
 				)
 			);
 
@@ -195,7 +191,7 @@ class Narnoo_Operator {
 	function display_reminders() {
 		$options = get_option( 'narnoo_operator_settings' );
 
-		if ( empty( $options['access_key'] ) || empty( $options['secret_key'] ) || empty( $options['token'] ) ) {
+		if ( empty( $options['access_key'] ) || empty( $options['secret_key'] ) ) {
 			Narnoo_Operator_Helper::show_notification(
 				sprintf(
 					__( '<strong>Reminder:</strong> Please key in your Narnoo API settings in the <strong><a href="%s">Settings->Narnoo API</a></strong> page.', NARNOO_OPERATOR_I18N_DOMAIN ),
@@ -240,16 +236,6 @@ class Narnoo_Operator {
 			12
 		);
 
-		// add submenus to Narnoo Media menu
-		/*$page = add_submenu_page(
-			'narnoo-operator-followers',
-			__( 'Narnoo Media - Followers', NARNOO_OPERATOR_I18N_DOMAIN ),
-			__( 'Followers', NARNOO_OPERATOR_I18N_DOMAIN ),
-			'manage_options',
-			'narnoo-operator-distributors',
-			array( &$this, 'followers_page' )
-		);
-		add_action( "load-$page", array( 'Narnoo_Operator_Followers_Table', 'add_screen_options' ) );*/
 
 		$page = add_submenu_page(
 			'narnoo-operator-followers',
@@ -332,14 +318,6 @@ class Narnoo_Operator {
 			'api_settings_section'
 		);
 
-		add_settings_field(
-			'token',
-			__( 'Token key', NARNOO_OPERATOR_I18N_DOMAIN ),
-			array( &$this, 'settings_token' ),
-			'narnoo_operator_api_settings',
-			'api_settings_section'
-		);
-
 		// register Narnoo shortcode button and MCE plugin
 		if ( ! current_user_can( 'edit_posts' ) && ! current_user_can( 'edit_pages' ) ) {
 			return;
@@ -365,10 +343,6 @@ class Narnoo_Operator {
 		echo "<input id='secret_key' name='narnoo_operator_settings[secret_key]' size='40' type='text' value='" . esc_attr($options['secret_key']). "' />";
 	}
 
-	function settings_token() {
-		$options = get_option( 'narnoo_operator_settings' );
-		echo "<input id='token' name='narnoo_operator_settings[token]' size='40' type='text' value='" . esc_attr($options['token']). "' />";
-	}
 
 	/**
 	 * Sanitize input settings.
@@ -376,7 +350,6 @@ class Narnoo_Operator {
 	function settings_sanitize( $input ) {
 		$new_input['access_key'] 	= trim( $input['access_key'] );
 		$new_input['secret_key'] 	= trim( $input['secret_key'] );
-		$new_input['token'] 		= trim( $input['token'] );
 		return $new_input;
 	}
 
@@ -398,13 +371,13 @@ class Narnoo_Operator {
 			</form>
 			<?php
 
-			$cache	 		= Narnoo_Operator_Helper::init_noo_cache();
+			//$cache	 		= Narnoo_Operator_Helper::init_noo_cache();
 			$request 		= Narnoo_Operator_Helper::init_api();
 
 			$operator = null;
 			if ( ! is_null( $request ) ) {
 
-				$operator = $cache->get('operator_details');
+				//$operator = $cache->get('operator_details');
 
 				if( empty( $operator ) ){
 
@@ -414,7 +387,7 @@ class Narnoo_Operator {
 						$operator = $request->accountDetails();
 
 						if(!empty( $operator->success ) ){
-								$cache->set('operator_details', $operator, 43200);
+								//$cache->set('operator_details', $operator, 43200);
 						}
 
 
@@ -429,6 +402,11 @@ class Narnoo_Operator {
 			}
 
 			if ( ! is_null( $operator ) ) {
+
+				$op_category = get_option( 'narnoo_operator_category' );
+				if(empty($op_category)){
+					update_option( 'narnoo_operator_category', lcfirst( $operator->category ), '', 'yes' );
+				}
 				?>
 				<h3><?php _e( 'Operator Details', NARNOO_OPERATOR_I18N_DOMAIN ) ?></h3>
 				<table class="form-table">
@@ -438,10 +416,6 @@ class Narnoo_Operator {
 					<tr><th><?php _e( 'Business Name', NARNOO_OPERATOR_I18N_DOMAIN ); ?></th><td><?php echo $operator->operator_businessname; ?></td></tr>
 					<tr><th><?php _e( 'Contact Name', NARNOO_OPERATOR_I18N_DOMAIN ); ?></th><td><?php echo $operator->operator_contactname; ?></td></tr>
 					<tr><th><?php _e( 'Location', NARNOO_OPERATOR_I18N_DOMAIN ); ?></th><td><?php echo $operator->location; ?></td></tr>
-					<!--<tr><th><?php _e( 'Country', NARNOO_OPERATOR_I18N_DOMAIN ); ?></th><td><?php echo $operator->country_name; ?></td></tr>
-					<tr><th><?php _e( 'Post Code', NARNOO_OPERATOR_I18N_DOMAIN ); ?></th><td><?php echo $operator->postcode; ?></td></tr>
-					<tr><th><?php _e( 'Suburb', NARNOO_OPERATOR_I18N_DOMAIN ); ?></th><td><?php echo $operator->suburb; ?></td></tr>
-					<tr><th><?php _e( 'State', NARNOO_OPERATOR_I18N_DOMAIN ); ?></th><td><?php echo $operator->state; ?></td></tr> -->
 					<tr><th><?php _e( 'Phone', NARNOO_OPERATOR_I18N_DOMAIN ); ?></th><td><?php echo $operator->phone; ?></td></tr>
 					<tr><th><?php _e( 'URL', NARNOO_OPERATOR_I18N_DOMAIN ); ?></th><td><?php echo $operator->operator_url; ?></td></tr>
 					<tr><th><?php _e( 'Category', NARNOO_OPERATOR_I18N_DOMAIN ); ?></th><td><?php echo $operator->category; ?></td></tr>
@@ -827,17 +801,5 @@ class Narnoo_Operator {
     	}
 
 	}
-
-
- //global $post;
-
-	   // if(!empty($post))
-	    //{
-
-	      //  if( is_page_template('page-home.php') )
-	       // {
-	//}
-	   // }
-
 
 }
