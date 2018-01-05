@@ -2,7 +2,7 @@
 
 class Operator extends WebClient {
 
-    public $operator_url = 'https://test-connect.narnoo.com/operator/';
+    public $operator_url = 'https://connect.narnoo.com/operator_dev/';
     public $authen;
 
     public function __construct($authenticate) {
