@@ -2,7 +2,8 @@
 
 class Operator extends WebClient {
 
-    public $operator_url = 'https://connect.narnoo.com/operator_dev/';
+    public $operator_url        = 'https://test-connect.narnoo.com/operator/';
+    public $bckup_operator_url  = 'https://connect.narnoo.com/operator_dev/';
     public $authen;
 
     public function __construct($authenticate) {
@@ -179,7 +180,7 @@ class Operator extends WebClient {
         $method = 'album_images';
         $method = $method.'/'.$id;
 
-        $this->setUrl($this->operator_url . $method);
+        $this->setUrl( $this->bckup_operator_url . $method );
         $this->setGet();
         try {
             return json_decode( $this->getResponse($this->authen) );

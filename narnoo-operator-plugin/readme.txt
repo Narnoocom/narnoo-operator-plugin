@@ -3,8 +3,8 @@ Contributors: Narnoo
 Donate link: 
 Tags: Tourism, Media, Web Service, Travel, Narnoo
 Requires at least: 3.3
-Tested up to: 4.7
-Stable tag: 2.0.0
+Tested up to: 4.8.2
+Stable tag: 2.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,11 @@ The Narnoo operator plugin allows a tourism business to manage and display their
 
 == Description ==
 
-The Narnoo operator plugin allows a tourism business to manage and display their promotional, product media hosted on Narnoo.com from their WordPress website. Using the plugin Operators can manage their media on Narnoo.com and also display their media through their own website's blogs or pages. Narnoo provides shortcodes that make displaying image galleries, videos and brochures simple and easy to achieve. All media files are hosted on Narnoo's global servers therefore, freeing up the users server requirements.
+The Narnoo operator plugin allows a tourism business to manage and display their promotional, product media hosted on Narnoo.com from their WordPress website. Using the plugin Operators can manage their media on Narnoo.com and display their media through their own website's blogs or pages. All media files are hosted on Narnoo's global servers therefore, freeing up the users server requirements.
+
+The plugin allows you to import your product information hosted within Narnoo.com. This creates a custom post type which you can then include into your theme's design. A dedicated instructions page is coming to: https://software.narnoo.com/wordpress
+
+This is an updated plugin from our preivous version which was 4 years old. We are creating a suite of plugins based on client requirements.
 
 == Installation ==
 
@@ -30,15 +34,16 @@ You can retrieve your APP keys from your account on Narnoo.com. Simply log into 
 
 == Screenshots ==
 
-1. This screen shot shows you how you can see the tourism distributor's that are following your product media.
-2. This screen shot shows you how you can interact with your images hosted on Narnoo.com. You can download the high resolution version, add the image to an album or delete the image from Narnoo.com
-3.This screen shot shows you how you can interact with your videos hosted on Narnoo.com. You can download the high definition version or delete the video from Narnoo.com.
-4. This screen shot shows you the short code menu option. We have 4 different image display options, 1 video display option and a brochure display option. All are easily embedded using the Narnoo short code menu.
-5. This screen shot is an example of the slider image gallery.
-6. All images have a large image file that is displayed in an lightbox. 
+None at this stage
 
 == Changelog ==
-
+18-10-17: Added a new get_featured_products function
+18-10-17: Added feature check box to products
+17-10-17: Resolved a bug when trying to output multiple products with markup
+16-10-17: Changed function names to be like WordPress - snake_case
+05-10-17: Complete updated authentication process
+05-10-17: Created a helper for rendering product fields to custom post type pages.
+05-10-17: General bug fixes
 06-01-17: Complete rebuild with API 2.0
 
 == Upgrade notice ==

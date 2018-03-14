@@ -7,21 +7,36 @@ if(!empty($action)){
 
 	switch ($action) {
 		case 'clear_cache':
+			$c=0;
 			$cache = Narnoo_Operator_Helper::init_noo_cache();
-			//$cache->clear();
 			$cPath = $cache->getPath();
-			$dir = scandir($cPath);
-			foreach ($dir as $folder) {
-				
-				$dirname = $cPath . $folder;
-					
-					if( is_dir( $dirname ) ){
-						
-						array_map('unlink', glob("$dirname/*.txt"));
-						rmdir($dirname);
-
+			
+			
+			$dir = glob($cPath.'*');
+			foreach($dir as $folder){
+				if( is_dir( $folder ) ){
+					$files = glob($folder."/*");
+					foreach ($files as $f ) {
+						unlink( $f );
+						$c++;
 					}
-				
+				}
+			}
+
+			if($c > 0){
+				Narnoo_Operator_Helper::show_notification(
+					sprintf(
+						__( '<strong>Success:</strong> Your Narnoo API cache has been cleared.', NARNOO_OPERATOR_I18N_DOMAIN ),
+						NARNOO_OPERATOR_I18N_DOMAIN
+					)
+				);
+			}else{
+				Narnoo_Operator_Helper::show_notification(
+					sprintf(
+						__( '<strong>Alert:</strong> Your Narnoo API cache was empty.', NARNOO_OPERATOR_I18N_DOMAIN ),
+						NARNOO_OPERATOR_I18N_DOMAIN
+					)
+				);
 			}
 
 			break;
